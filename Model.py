@@ -4,6 +4,7 @@ from keras.layers.convolutional import *
 from keras.layers import * 
 from keras.layers.recurrent import *
 from keras.layers.merge import *
+from keras.models import *
 
 def ctcLambdaFunction(args):
     y_pred, labels, input_length, label_length = args
@@ -49,3 +50,38 @@ def modelForWords():
     conv7 = Conv2D(512, (2, 2), padding='same', name='conv7', kernel_initializer='he_normal')(mp4)
     bn7 = BatchNormalization()(conv7)
     act7 = Activation('relu')(bn7)
+
+    rs1 = Reshape(target_shape=((32,2048)), name='reshape1')(act7)
+    dc1 = Dense(64, activation='relu', kernel_initializer='he_normal', name='dense1')(rs1)
+
+    gru1 = GRU(256,return_sequences=True, kernel_initializer='he_normal', name='gru1')(dc1)
+    gru1_ = GRU(256, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='gru1_')(dc1)
+    reversed_gru1_ = Lambda(lambda inputTensor: K.reverse(inputTensor, axes=1))(gru1_)
+
+    gru1_merged = add([gru1,reversed_gru1_])
+    gru1_merged_1 = BatchNormalization()(gru1_merged)
+
+    gru2 = GRU(256,return_sequences=True, kernel_initializer='he_normal', name='gru2')(gru1_merged_1)
+    gru2_ = GRU(256, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='gru1_')(gru1_merged_1)
+    reversed_gru2_ = Lambda(lambda inputTensor: K.reverse(inputTensor, axes=1))(gru2_)
+    
+    gru2_merged = concatenate([gru2,reversed_gru2_])
+    gru2_merged_1 = BatchNormalization()(gru2_merged)
+
+    dc2 = Dense(classes, kernel_initializer='he_normal', name='dense2')(gru2_merged_1)
+    y_pred = Activation('softmax', name='softmax')(dc2)
+
+    labels = Input(name='input_length', shape=[max_text_len], dtype='float32')
+    input_length = Input(name='input_length', shape=[1], dtype='int64')
+    label_length = Input(name='input_length', shape=[1], dtype='int64')
+
+    loss_out = Lambda(ctcLambdaFunction, output_shape=(1,), name='ctc')(
+        [y_pred, labels, input_length, label_length]
+    )
+
+    model = Model(inputs = [inp_data, labels, input_length, label_length], outputs=loss_out)
+
+    model_predict = Model(inputs=inp_data, outputs=y_pred)
+    model.predict.summary()
+
+    return model, model.predict
