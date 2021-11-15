@@ -43,12 +43,12 @@ class DataGenerator:
     def nextBatch(self):
         while(True):
             if K.image_data_format() == 'channel_first':
-                X_data = np.ones([self.batch_size,1,self.img_w,self.img_h])
+                X_data = np.ones([self.batch_size, 1, self.w, self.h])
             else:
-                X_data = np.ones([self.batch_size,self.max_text_len])
-            Y_data = np.zeros([self.batch_size,self.max_text_len])
-            input_length = np.ones((self.batch_size,1)) * self.i_len
-            label_length = np.zeros((self.batch_size,1))
+                X_data = np.ones([self.batch_size, self.w, self.h, 1])
+            Y_data = np.zeros([self.batch_size, self.max_text_len])
+            input_length = np.ones((self.batch_size, 1)) * self.i_len
+            label_length = np.zeros((self.batch_size, 1))
 
             for i in range(self.batch_size):
                 img,text = self.nextSample()
