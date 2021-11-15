@@ -42,4 +42,36 @@ class DataGenerator:
         if self.curr_index >= self.n:
             self.curr_index = 0
             random.shuffle(self.indexes)
+        return self.imgs[self.indexes[self.curr_index]], self.texts[self.indexes[self.curr_index]]
+
+    def nextBatch(self):
+        while(True):
+            if K.image_data_format() == 'channel_first':
+                X_data = np.ones([self.batch_size,1,self.img_w,self.img_h])
+            else:
+                X_data = np.ones([self.batch_size,self.max_text_len])
+            Y_data = np.zeros([self.batch_size,self.max_text_len])
+            input_length = np.ones((self.batch_size,1)) * self.i_len
+            label_length = np.zeros((self.batch_size,1))
+
+            for i in range(self.batch_size):
+                img,text = self.nextSample()
+                img = img.T
+                if K.image_data_format() == 'channel_first':
+                    img = np.expand_dims(img,0)
+                else:
+                    img = np.expand_dims(img,-1)
+                X_data[i] = img
+                Y_data[i,:len(text)] = mapTL(text)
+                label_length[i] = len(text)
+            
+            inputs = {
+                'the_input': X_data,
+                'the_labels': Y_data,
+                'input_length': input_length,
+                'label_length': label_length,
+            }
+
+            outputs = {'ctc':np.zeros([self.batch_size])}
+            yield(inputs,outputs)
             
