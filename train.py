@@ -47,8 +47,8 @@ def train(train_data, val_data, is_word_model):
     
     return model
 
-train_data = getPathAndTexts('data/IAM/splits/train.uttlist', is_words=True)
-val_data = getPathAndTexts('data/IAM/splits/validation.uttlist', is_words=True)
+train_data = getPathAndTexts('dataset/splits/train.uttlist', is_words=True)
+val_data = getPathAndTexts('dataset/splits/validation.uttlist', is_words=True)
 print('number of train image: ', len(train_data))
 print('number of valid image: ', len(val_data))
 
