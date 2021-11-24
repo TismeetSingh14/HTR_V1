@@ -34,22 +34,23 @@ def imgPrep(img, height):
     return cv2.resize(img, dsize = None, fx = factor, fy = factor)
 
 def createKernel(kernelSize, sigma, theta):
-    assert kernelSize % 2
-    halfSize = kernelSize // 2
-    kernel = np.zeros([kernelSize, kernelSize])
-    sigmaX = sigma
-    sigmaY = sigma*theta
-
-    for i in range(kernelSize):
-        for j in range(kernelSize):
-            x = i - halfSize
-            y = j - halfSize
-
-            expTerm = np.exp(-x**2 / (2*sigmaX) - y**2 / (2*sigmaY))
-            xTerm = (x**2 - sigmaX**2) / (2 * math.pi * sigmaX**5 * sigmaY)
+	assert kernelSize % 2
+	halfSize = kernelSize // 2
+	
+	kernel = np.zeros([kernelSize, kernelSize])
+	sigmaX = sigma
+	sigmaY = sigma * theta
+	
+	for i in range(kernelSize):
+		for j in range(kernelSize):
+			x = i - halfSize
+			y = j - halfSize
+			
+			expTerm = np.exp(-x**2 / (2 * sigmaX) - y**2 / (2 * sigmaY))
+			xTerm = (x**2 - sigmaX**2) / (2 * math.pi * sigmaX**5 * sigmaY)
 			yTerm = (y**2 - sigmaY**2) / (2 * math.pi * sigmaY**5 * sigmaX)
+			
+			kernel[i, j] = (xTerm + yTerm) * expTerm
 
-            kernel[i, j] = (xTerm + yTerm) * expTerm
-
-    kernel = kernel / np.sum(kernel)
-    return kernel
+	kernel = kernel / np.sum(kernel)
+	return kernel
