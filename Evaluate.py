@@ -1,16 +1,14 @@
 from Parameters import *
 from Utils import *
-from sklearn.model_selection import train_test_split
 import editdistance
-from Spell import correction
 from keras.models import model_from_json
 from DataGenerator import DataGenerator
 
 test_data = getPathAndTexts('', isWords = True)
 print('number of test image: ', len(test_data))
 
-with open('', 'r') as f:
-	model = model_from_json(f.read())
+with open('/content/word_model.json', 'r') as f:
+    model = model_from_json(f.read())
 model.load_weights('')
 
 ed_chars = num_chars = ed_words = num_words = 0

@@ -10,7 +10,7 @@ from Spell import correction_list
 import shutil
 from keras.models import model_from_json
 
-with open('', 'r') as f:
+with open('/content/word_model.json', 'r') as f:
     model = model_from_json(f.read())
 
 model.load_weights('')
