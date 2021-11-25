@@ -54,21 +54,28 @@ def modelForWords():
     rs1 = Reshape(target_shape=((32,2048)), name='reshape1')(act7)
     dc1 = Dense(64, activation='relu', kernel_initializer='he_normal', name='dense1')(rs1)
 
-    gru1 = GRU(256,return_sequences=True, kernel_initializer='he_normal', name='gru1')(dc1)
-    gru1_ = GRU(256, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='gru1_')(dc1)
-    reversed_gru1_ = Lambda(lambda inputTensor: K.reverse(inputTensor, axes=1))(gru1_)
+    lstm1 = LSTM(128,return_sequences=True, kernel_initializer='he_normal', name='lstm1')(dc1)
+    lstm1_ = LSTM(128, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='lstm1_')(dc1)
+    reversed_lstm1_ = Lambda(lambda inputTensor: K.reverse(inputTensor, axes=1))(lstm1_)
 
-    gru1_merged = add([gru1,reversed_gru1_])
-    gru1_merged_1 = BatchNormalization()(gru1_merged)
+    lstm1_merged = add([lstm1,reversed_lstm1_])
+    lstm1_merged_1 = BatchNormalization()(lstm1_merged)
 
-    gru2 = GRU(256,return_sequences=True, kernel_initializer='he_normal', name='gru2')(gru1_merged_1)
-    gru2_ = GRU(256, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='gru2_')(gru1_merged_1)
-    reversed_gru2_ = Lambda(lambda inputTensor: K.reverse(inputTensor, axes=1))(gru2_)
+    lstm2 = LSTM(256,return_sequences=True, kernel_initializer='he_normal', name='lstm2')(lstm1_merged_1)
+    lstm2_ = LSTM(256, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='lstm2_')(lstm1_merged_1)
+    reversed_lstm2_ = Lambda(lambda inputTensor: K.reverse(inputTensor, axes=1))(lstm2_)
     
-    gru2_merged = concatenate([gru2,reversed_gru2_])
-    gru2_merged_1 = BatchNormalization()(gru2_merged)
+    lstm2_merged = concatenate([lstm2,reversed_lstm2_])
+    lstm2_merged_1 = BatchNormalization()(lstm2_merged)
 
-    dc2 = Dense(classes, kernel_initializer='he_normal', name='dense2')(gru2_merged_1)
+    lstm3 = LSTM(256,return_sequences=True, kernel_initializer='he_normal', name='lstm3')(lstm2_merged_1)
+    lstm3_ = LSTM(256, return_sequences=True, go_backwards=True, kernel_initializer='he_normal', name='lstm3_')(lstm2_merged_1)
+    reversed_lstm3_ = Lambda(lambda inputTensor: K.reverse(inputTensor, axes=1))(lstm3_)
+    
+    lstm3_merged = concatenate([lstm3,reversed_lstm3_])
+    lstm3_merged_1 = BatchNormalization()(lstm3_merged)
+
+    dc2 = Dense(classes, kernel_initializer='he_normal', name='dense2')(lstm3_merged_1)
     y_pred = Activation('softmax', name='softmax')(dc2)
 
     labels = Input(name='the_labels', shape=[max_text_len], dtype='float32')
