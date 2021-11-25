@@ -35,22 +35,25 @@ def getPathAndTexts(partition_split_file, is_words):
     partition_folder = [x.strip() for x in partition_folder]
     
     if is_words:
-        with open ('words.txt') as f:
+        with open ('/content/words.txt') as f:
             for line in f:
-                if not line or line.startswith('#'): # comment in txt file
+                if not line or line.startswith('#'): 
                     continue
                 line_split = line.strip().split(' ')
                 if len(line_split) < 9:
                     continue
                 status = line_split[1]
-                if status == 'err': # er: segmentation of word can be bad
+                if status == 'err':
                     continue
 
                 file_name_split = line_split[0].split('-')
                 label_dir = file_name_split[0]
                 sub_label_dir = '{}-{}'.format(file_name_split[0], file_name_split[1])
                 fn = '{}.png'.format(line_split[0])
-                img_path = os.path.join('/data/', label_dir, sub_label_dir, fn)
+                img_path = os.path.join('/content/data/', label_dir, sub_label_dir, fn)
+
+                if img_path in ['/content/data/a01/a01-117/a01-117-05-02.png', '/content/data/r06/r06-022/r06-022-03-05.png']:
+                    continue
 
                 gt_text = ' '.join(line_split[8:])
                 if len(gt_text)>16:

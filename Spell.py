@@ -4,8 +4,8 @@ from collections import Counter
 def words(text):
     return re.findall(r'\w+',text.lower())
 
-words_count = Counter(words(open('').read()))
-checked_word = words(open('').read())
+words_count = Counter(words(open('/content/big.txt').read()))
+checked_word = words(open('/content/wordlist.txt').read())
 
 def P(word, N=sum(words_count.values())):
     return words_count[word]/N
