@@ -68,7 +68,7 @@ def predict_image(model_predict, path, is_word):
         width = word_cfg['img_w']
     else:
         width = line_cfg['img_w']
-    img = preprocess(path, width, 64)
+    img = preprocess(path, 64, width)
     img = img.T
     if K.image_data_format() == 'channels_first':
         img = np.expand_dims(img, 0)
