@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import cv2
 from Preprocessor import preprocess
 from keras import backend as K
-from keras.utils import plot_model
+from tensorflow.keras.utils import plot_model
 from Spell import correction_list
 import shutil
 from keras.models import model_from_json

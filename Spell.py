@@ -4,8 +4,8 @@ from collections import Counter
 def words(text):
     return re.findall(r'\w+',text.lower())
 
-words_count = Counter(words(open('/content/big.txt').read()))
-checked_word = words(open('/content/wordlist.txt').read())
+words_count = Counter(words(open('/content/dataset/big.txt').read()))
+checked_word = words(open('/content/dataset/wordlist.txt').read())
 
 def P(word, N=sum(words_count.values())):
     return words_count[word]/N
@@ -14,11 +14,11 @@ def correction(word):
     if word.lower() in checked_word:
         new_word = word
     else:
-        new_word = max(candidates(word,words_count), key=P)
+        new_word = max(candidates(word), key=P)
         if word[0].lower()==new_word[0]:
             new_word = list(new_word)
             new_word[0] = word[0]
-            new_word = ' '.join(new_word)
+            new_word = ''.join(new_word)
     return new_word
 
 def correction_list(words):

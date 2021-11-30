@@ -4,12 +4,12 @@ import editdistance
 from keras.models import model_from_json
 from DataGenerator import DataGenerator
 
-test_data = getPathAndTexts('', isWords = True)
+test_data = getPathAndTexts('/content/dataset/smalltest.txt', isWords = True)
 print('number of test image: ', len(test_data))
 
-with open('/content/word_model.json', 'r') as f:
+with open('/content/dataset/word_model.json', 'r') as f:
     model = model_from_json(f.read())
-model.load_weights('')
+model.load_weights('/content/iam_words--50--1999.h5')
 
 ed_chars = num_chars = ed_words = num_words = 0
 for path, gt_text in test_data:
